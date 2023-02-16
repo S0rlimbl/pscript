@@ -1,0 +1,116 @@
+local plr = game.Players.LocalPlayer
+if plr.PlayerGui:FindFirstChild("ScreenGui") then
+	plr.PlayerGui.ScreenGui:Remove()
+end
+local screengui = Instance.new("ScreenGui",plr.PlayerGui)
+local button1 = Instance.new("TextButton",screengui)
+button1.Size = UDim2.new(0.1,0,0.1,0)
+button1.Position = UDim2.new(0,0,.8,0)
+button1.SizeConstraint = Enum.SizeConstraint.RelativeYY
+local round = Instance.new("UICorner",button1)
+button1.Text = "Refresh"
+local origin = 0
+local ui = {}
+button1.MouseButton1Click:Connect(function()
+	for _,v in pairs(ui) do
+		if v then
+			v:Remove()
+		end
+	end
+	ui = {}
+	origin = 0
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v:IsA("ProximityPrompt") then
+			print("Detected PP")
+			if v.ActionText == "Pick up" then
+				print("i found something")
+				local hp = v.Parent
+				origin += 1
+				local no = origin
+				local e,n = pcall(function()
+					spawn(function()
+						local frame = Instance.new("Frame",screengui)
+						frame.Name = "Heart"
+						frame.BackgroundTransparency = 1
+						frame.Size = UDim2.new(.025,0,.025,0)
+						frame.SizeConstraint = Enum.SizeConstraint.RelativeXX
+						local distance = Instance.new("TextLabel",frame)
+						distance.TextColor3 = Color3.new(0,1,0)
+						distance.TextStrokeColor3 = Color3.new(0,0,0)
+						distance.Size = UDim2.new(1,0,.5,0)
+						distance.Position = UDim2.new(0,0,0,0)
+						distance.BackgroundTransparency = 1
+						distance.TextScaled = true
+						local name = Instance.new("TextLabel",frame)
+						name.TextColor3 = Color3.new(0,1,0)
+						name.TextStrokeColor3 = Color3.new(0,0,0)
+						name.Size = UDim2.new(1,0,.5,0)
+						name.Position = UDim2.new(0,0,0.5,0)
+						name.BackgroundTransparency = 1
+						name.TextScaled = true
+						name.Text = no
+						local b = Instance.new("TextButton",frame)
+						
+						b.TextStrokeColor3 = Color3.new(0,0,0)
+						b.Size = UDim2.new(1,0,1,0)
+						b.Position = UDim2.new(0,0,0,0)
+						b.BackgroundTransparency = 1
+						b.TextScaled = true
+						b.Text = ""
+						local frameline = Instance.new("Frame",screengui)
+						frameline.Name = "Heart"
+						frameline.BackgroundTransparency = 0
+						frameline.Size = UDim2.new(0,0,0,0)
+						local frameline2 = Instance.new("Frame",frameline)
+						frameline2.Name = "Heart"
+						frameline2.BackgroundTransparency = 0
+						frameline2.Position = UDim2.new(0,0,0,0)
+						frameline2.BorderSizePixel = 0
+						local hl = Instance.new("Highlight",hp)
+						hl.FillColor = Color3.new(0,1,0)
+						hl.OutlineColor = Color3.new(0,0,0)
+						hp.Transparency = 0
+						b.MouseButton1Click:Connect(function()
+							workspace.Camera.CameraSubject = hp
+							wait(1)
+							workspace.Camera.CameraSubject = plr.Character.Humanoid
+						end)
+						
+						table.insert(ui,frame)
+						table.insert(ui,distance)
+						table.insert(ui,name)
+						table.insert(ui,b)
+						table.insert(ui,frameline)
+						table.insert(ui,frameline2)
+						
+						while hp and hp.Parent and frame and frame.Parent do
+							local pos = workspace.CurrentCamera:WorldToScreenPoint(hp.Position)
+							local pos2 = Vector2.new(screengui.AbsoluteSize.X*.5,screengui.AbsoluteSize.Y*.9)
+							frameline.Rotation = -math.deg(math.atan2(pos.X - pos2.X,pos.Y - pos2.Y))-90
+							frameline.Position = UDim2.new(0,pos2.X,0,pos2.Y)
+							frameline2.BackgroundColor3 = Color3.fromHSV(1/origin*no, 1, 1)
+							b.TextColor3 = Color3.fromHSV(1/origin*no, 1, 1)
+							distance.TextColor3 = Color3.fromHSV(1/origin*no, 1, 1)
+							name.TextColor3 = Color3.fromHSV(1/origin*no, 1, 1)
+							hl.FillColor = Color3.fromHSV(1/origin*no, 1, 1)
+							hl.OutlineColor = Color3.fromHSV(1/origin*no, 1, 1)
+							frame.Position = UDim2.new(0,pos.X,0,pos.Y)
+							distance.Text = math.round((plr.Character.HumanoidRootPart.Position - hp.Position).Magnitude*10)/10
+							if pos.Z > 0 then
+								frame.Visible = true
+								frameline2.Size = UDim2.new(0,-(Vector2.new(pos.X,pos.Y) - Vector2.new(pos2.X,pos2.Y)).Magnitude,0,1)
+
+							else
+								frame.Visible = false
+								frameline2.Size = UDim2.new(0,10000,0,0.01)
+
+							end
+							task.wait()
+						end
+					end)
+				end)
+				print(e,n)
+			end
+		end
+	end
+end)
