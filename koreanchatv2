@@ -1,0 +1,189 @@
+local plr = game.Players.LocalPlayer
+local cho = {['ㄱ']=0,['ㄲ']=1,['ㄴ']=2,['ㄷ']=3,['ㄸ']=4,['ㄹ']=5,['ㅁ']=6,['ㅂ']=7,['ㅃ']=8,['ㅅ']=9,['ㅆ']=10,['ㅇ']=11,['ㅈ']=12,['ㅉ']=13,['ㅊ']=14,['ㅋ']=15,['ㅌ']=16,['ㅍ']=17,['ㅎ']=18}
+local jun = {['ㅏ']=0,['ㅐ']=1,['ㅑ']=2,['ㅒ']=3,['ㅓ']=4,['ㅔ']=5,['ㅕ']=6,['ㅖ']=7,['ㅗ']=8,['ㅘ']=9,['ㅙ']=10,['ㅚ']=11,['ㅛ']=12,['ㅜ']=13,['ㅝ']=14,['ㅞ']=15,['ㅟ']=16,['ㅠ']=17,['ㅡ']=18,['ㅢ']=19,['ㅣ']=20}
+local zon = {[' ']=0,['ㄱ']=1,['ㄲ']=2,['ㄳ']=3,['ㄴ']=4,['ㄵ']=5,['ㄶ']=6,['ㄷ']=7,['ㄹ']=8,['ㄺ']=9,['ㄻ']=10,['ㄼ']=11,['ㄽ']=12,['ㄾ']=13,['ㄿ']=14,['ㅀ']=15,['ㅁ']=16,['ㅂ']=17,['ㅄ']=18,['ㅅ']=19,['ㅆ']=20,['ㅇ']=21,['ㅈ']=22,['ㅊ']=23,['ㅋ']=24,['ㅌ']=25,['ㅍ']=26,['ㅎ']=27}
+local shfed = {['ㅂ']='ㅃ',['ㅈ']='ㅉ',['ㄷ']='ㄸ',['ㄱ']='ㄲ',['ㅅ']='ㅆ',['ㅐ']='ㅒ',['ㅔ']='ㅖ'}
+
+local gitable = {['`']='~',['1']='!',['2']='@',['3']='#',['4']='$',['5']='%',['6']='^',['7']='&',['8']='*',['9']='(',['0']=')',['-']='_',['=']='+',['[']='{',[']']='}',['\\']='|',[';']=':',["'"]='"',[',']='<',['.']='>',['/']='?'}
+local chotable = {['ㄱ'] = {['ㅅ'] = 'ㄳ'},['ㄴ'] = {['ㅈ'] = 'ㄵ',['ㅎ'] = 'ㄶ'},['ㄹ'] = {['ㄱ'] = 'ㄺ',['ㅁ'] = 'ㄻ',['ㅂ'] = 'ㄼ',['ㅅ'] = 'ㄽ',['ㅌ'] = 'ㄾ',['ㅍ'] = 'ㄿ',['ㅎ'] = 'ㅀ'},['ㅂ'] = {['ㅅ'] = 'ㅄ'}}
+local juntable = {['ㅗ']={['ㅣ'] = "ㅚ",['ㅏ'] = "ㅘ",['ㅐ'] = "ㅙ"},['ㅜ']={['ㅓ'] = "ㅝ",['ㅔ'] = "ㅞ",['ㅣ'] = "ㅟ"},['ㅡ']={['ㅣ'] = "ㅢ"}}
+local keyb = {['q']='ㅂ',['w']='ㅈ',['e']='ㄷ',['r']='ㄱ',['t']='ㅅ',['y']='ㅛ',['u']='ㅕ',['i']='ㅑ',['o']='ㅐ',['p']='ㅔ',['a']='ㅁ',['s']='ㄴ',['d']='ㅇ',['f']='ㄹ',['g']='ㅎ',['h']='ㅗ',['j']='ㅓ',['k']='ㅏ',['l']='ㅣ',['z']='ㅋ',['x']='ㅌ',['c']='ㅊ',['v']='ㅍ',['b']='ㅠ',['n']='ㅜ',['m']='ㅡ'}
+
+local UserInputService = game:GetService("UserInputService")
+local cache = {}
+local shift = false
+local sc = Instance.new("ScreenGui")
+sc.Name = "CHSCUI"
+sc.Parent = plr.PlayerGui
+sc.DisplayOrder = 10000
+local chui = Instance.new("TextLabel")
+chui.Parent = sc
+chui.BackgroundTransparency = 1
+chui.TextScaled = true
+chui.TextColor3 = Color3.new(1,1,1)
+chui.TextStrokeTransparency = 0
+chui.TextStrokeColor3 = Color3.new(0,0,0)
+chui.ZIndex = 1000
+chui.Size = UDim2.new(1,0,0.2,0)
+chui.Position = UDim2.new(0.5- chui.Size.X.Scale/2, 0, 0.5-chui.Size.Y.Scale/2,0)
+chui.Visible = false
+chui.Text = "Click to Chat"
+local maint = Instance.new("TextBox")
+maint.Parent = chui
+maint.Size = UDim2.new(1,0,1,0)
+maint.TextTransparency = 1
+maint.BackgroundTransparency = 1
+local cibc = game:GetService("TextChatService"):FindFirstChildOfClass("ChatInputBarConfiguration")
+local cwc = game:GetService("TextChatService"):FindFirstChildOfClass("ChatWindowConfiguration")
+local focused = false
+local kor = false
+function code_to_text(t)
+	if t['jun'] ~= nil then
+		local code = 44032 + cho[t['cho']] * 21 * 28 + jun[t['jun']] * 28 + zon[t['zon']]
+		return code
+	else
+		return 0
+	end
+end
+function printt()
+	local c = ""
+
+	for i in cache do
+		if i then
+			c = c..cache[i]['text']
+		end
+	end
+	return c
+end
+UserInputService.InputBegan:Connect(function(input,gameProcessedEvent)
+	if input.KeyCode == Enum.KeyCode.LeftShift or input.KeyCode == Enum.KeyCode.RightShift and focused then
+		shift = true
+	elseif (input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightAlt) and focused then
+		kor = not kor
+	end
+	if #UserInputService:GetStringForKeyCode(input.KeyCode) == 1 and focused then
+		local ty
+		if shift and kor then
+			if shfed[keyb[string.lower(UserInputService:GetStringForKeyCode(input.KeyCode))]] then
+				ty = shfed[keyb[string.lower(UserInputService:GetStringForKeyCode(input.KeyCode))]]
+			else
+				ty = keyb[string.lower(UserInputService:GetStringForKeyCode(input.KeyCode))]
+			end
+		elseif kor then
+			ty = keyb[string.lower(UserInputService:GetStringForKeyCode(input.KeyCode))]
+		end
+		local t = {
+			['more'] = false,
+			['cho'] = nil,
+			['jun'] = nil,
+			['zon'] = " ",
+			['text'] = "",
+		}
+		if ty then
+			if cho[ty] then
+				t['cho'] = ty
+				t['more'] = true
+			end
+			t['text'] = ty
+		end
+		if cache[#cache] and cache[#cache]['more'] and ty then
+			if jun[ty] ~= nil and cache[#cache]['jun'] == nil then
+				cache[#cache]['jun'] = ty
+				cache[#cache]['text'] = utf8.char(code_to_text(cache[#cache]))
+				return
+			elseif zon[ty] ~= nil and cache[#cache]['zon'] == " " and cache[#cache]['jun'] ~= nil then
+				cache[#cache]['zon'] = ty
+				cache[#cache]['text'] = utf8.char(code_to_text(cache[#cache]))
+				return
+			end
+		end
+		if jun[ty] ~= nil and cache[#cache] and cache[#cache]['zon'] ~= " " and cho[cache[#cache]['zon']] ~= nil then
+			t['cho'] = cache[#cache]['zon']
+			t['jun'] = ty
+			t['text'] = utf8.char(code_to_text(t))
+			t['more'] = true
+			cache[#cache]['zon'] = " "
+			cache[#cache]['text'] = utf8.char(code_to_text(cache[#cache]))
+		elseif jun[ty] ~= nil and cache[#cache] and cache[#cache]['zon'] == " " and cache[#cache]['jun'] and juntable[cache[#cache]['jun']] and juntable[cache[#cache]['jun']][ty] then
+			cache[#cache]['jun'] = juntable[cache[#cache]['jun']][ty]
+			cache[#cache]['text'] = utf8.char(code_to_text(cache[#cache]))
+			return
+		elseif cho[ty] ~= nil and cache[#cache] and cache[#cache]['cho'] then
+			if cache[#cache]['zon'] ~= ' ' and chotable[cache[#cache]['zon']] and chotable[cache[#cache]['zon']][ty] then
+				cache[#cache]['last'] = ty
+				cache[#cache]['origin'] = cache[#cache]['zon']
+				cache[#cache]['zon'] = chotable[cache[#cache]['zon']][ty]
+				cache[#cache]['text'] = utf8.char(code_to_text(cache[#cache]))
+				cache[#cache]['more'] = false
+				return
+			elseif cache[#cache]['jun'] == nil and chotable[cache[#cache]['cho']] and chotable[cache[#cache]['cho']][ty] then
+				cache[#cache]['cho'] = chotable[cache[#cache]['cho']][ty]
+				cache[#cache]['text'] = cache[#cache]['cho']
+				cache[#cache]['more'] = false
+				return
+			end
+		elseif jun[ty] ~= nil and cache[#cache] and cache[#cache]['zon'] ~= " " and cache[#cache]['last'] then
+			t['cho'] = cache[#cache]['last']
+			t['jun'] = ty
+			t['text'] = utf8.char(code_to_text(t))
+			t['more'] = true
+			cache[#cache]['zon'] = cache[#cache]['origin']
+			cache[#cache]['origin'] = nil
+			cache[#cache]['last'] = nil
+			cache[#cache]['text'] = utf8.char(code_to_text(cache[#cache]))
+		end
+		if not ty then
+			t['text'] = string.lower(UserInputService:GetStringForKeyCode(input.KeyCode))
+			if shift then
+				t['text'] = string.upper(t['text'])
+			end
+			if gitable[t['text']] and shift then
+				t['text'] = gitable[t['text']]
+			end
+		end
+		if cache[#cache] then
+			cache[#cache]['more'] = false
+		end
+		if t['text'] ~= "" then
+			cache[#cache + 1] = t
+		end
+	end
+	if focused and input.KeyCode == Enum.KeyCode.Backspace then
+		if cache[#cache] then
+			cache[#cache] = nil
+		end
+	end
+	if not gameProcessedEvent and input.KeyCode == Enum.KeyCode.Comma then
+		chui.Visible = not chui.Visible
+	end
+end)
+UserInputService.InputEnded:Connect(function(input,gameProcessedEvent)
+	if input.KeyCode == Enum.KeyCode.LeftShift or input.KeyCode == Enum.KeyCode.RightShift then
+		shift = false
+	end
+end)
+maint.Focused:Connect(function()
+	focused = true
+	chui.Text = ""
+	while focused and task.wait() do
+		local txt = printt()
+		chui.Text = txt
+	end
+	chui.Text = "Click to Chat"
+end)
+maint.FocusLost:Connect(function(m)
+	if m then
+		local txt = printt()
+		if game:FindFirstChild("TextChatService") and game.TextChatService:FindFirstChild("TextChannels") then
+			game:GetService("TextChatService"):WaitForChild("TextChannels"):WaitForChild("RBXGeneral"):SendAsync(txt)
+		elseif game:FindFirstChild("Chat") then
+			local MessageSender = require(game.Chat.ChatScript.ChatMain.MessageSender)
+			MessageSender:RegisterSayMessageFunction(game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest)
+			MessageSender:SendMessage(txt, "All")
+		end
+	end
+	focused = false
+	chui.Visible = false
+	chui.Text = "Click to Chat"
+	cache = {}
+end)
